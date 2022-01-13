@@ -1,4 +1,4 @@
-const URL = "https://olizan.dk/eksamen";
+const URL = "https://olizan.dk/tomcat/practise";
 
 function handleHttpErrors(res) {
   if (!res.ok) {
@@ -44,6 +44,53 @@ let apiFacade = () => {
       });
   };
 
+  const createTrip = (endpoint, updateAction, setErrorMessage, trip) => {
+    const options = makeOptions("POST", true, trip);
+    console.log(trip)
+    return fetch(URL + "/api/" + endpoint, options)
+      .then(handleHttpErrors)
+      .then((data) => updateAction(data))
+      .catch((err) => {
+        if (err.status) {
+          console.log(err);
+          err.fullError.then((e) => setErrorMessage(e.code + ": " + e.message));
+        } else {
+          setErrorMessage("Network error");
+        }
+      });
+  };
+
+  const createGuide = (endpoint, updateAction, setErrorMessage, guide) => {
+    const options = makeOptions("POST", true, guide);
+    console.log(guide)
+    return fetch(URL + "/api/" + endpoint, options)
+      .then(handleHttpErrors)
+      .then((data) => updateAction(data))
+      .catch((err) => {
+        if (err.status) {
+          console.log(err);
+          err.fullError.then((e) => setErrorMessage(e.code + ": " + e.message));
+        } else {
+          setErrorMessage("Network error");
+        }
+      });
+  };
+
+  const deleteButton = (endpoint, updateAction) => {
+    console.log("1")
+    const options = makeOptions("DELETE", true);
+    console.log("2")
+     fetch(URL + "/api/" + endpoint, options)
+      .then(handleHttpErrors)
+      .then((data) => updateAction(data))
+      .catch((err) => {
+        if (err.status) {
+          console.log(err);
+          err.fullError.then((e) => (console.log(e)));
+        } 
+      }); 
+  };
+
   // Security funktionalitet
 
   const setToken = (token) => {
@@ -82,7 +129,7 @@ let apiFacade = () => {
 
   const hasUserAccess = (neededRole, loggedIn) => {
     const roles = getUserRoles().split(",");
-    return loggedIn && roles.includes(neededRole);
+    return loggedIn && (roles.includes(neededRole) || roles.includes("admin"));
   };
 
   const makeOptions = (method, addToken, body) => {
@@ -113,6 +160,9 @@ let apiFacade = () => {
     getUserRoles,
     getUsername,
     hasUserAccess,
+    createTrip,
+    createGuide,
+    deleteButton
   };
 };
 

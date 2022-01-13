@@ -14,6 +14,9 @@ import {
 } from "react-router-dom";
 import NoMatch from "./Components/NoMatch";
 import AddComponent from "./Components/AddComponent";
+import TripsTab from "./Components/TripsTab";
+import CreateTripsTab from "./Components/CreateTripsTab"
+import AllGuidesTab from "./Components/AllGuidesTab";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -40,16 +43,21 @@ function App() {
               setErrorMessage={setErrorMessage}
             />
           </Route>
-          <Route path="/addcomponent">
+          {facade.hasUserAccess("user", loggedIn) && (
+              <Route path="/AllGuidesTab">
+              <AllGuidesTab facade={facade} setErrorMessage={setErrorMessage} />
+              </Route>
+            )}
             {facade.hasUserAccess("user", loggedIn) && (
-              <AddComponent facade={facade} setErrorMessage={setErrorMessage} />
+              <Route path="/TripsTab">
+              <TripsTab facade={facade} setErrorMessage={setErrorMessage} />
+              </Route>
             )}
-          </Route>
-          <Route path="/addcomponent">
             {facade.hasUserAccess("admin", loggedIn) && (
-              <AddComponent facade={facade} setErrorMessage={setErrorMessage} />
+              <Route path="/CreateTripsTab">
+              <CreateTripsTab facade={facade} setErrorMessage={setErrorMessage} />
+              </Route>
             )}
-          </Route>
           <Route path="*">
             <NoMatch />
           </Route>
